@@ -3,17 +3,19 @@
 """
 Created on Sun Mar 29 10:28:15 2020
 
-@author: alexander lucaci
+@author: Alexander G. Lucaci
 
 conda install -c conda-forge biopython
 conda install -c plotly plotly
 conda install -c synthicity prettytable
+
+SARS2 Reference Genome
+https://www.ncbi.nlm.nih.gov/nuccore/NC_045512
 """
 
 # =============================================================================
 # Imports
 # =============================================================================
-
 import os, sys
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
@@ -24,34 +26,39 @@ import plotly.graph_objects as go
 import plotly
 import numpy as np
 import pandas as pd
-#from prettytable import PrettyTable
 
 # =============================================================================
 # Declares
 # =============================================================================
-
 # Gene file
 fasta_data = sys.argv[1]
 reference_gene = ""
 
-print("# (Model) Input file is:", fasta_data)
+print("# Input file is:", fasta_data)
 print("# Creating consensus sequence.")
 
 alignment = AlignIO.read(fasta_data, 'fasta')
 summary_align = AlignInfo.SummaryInfo(alignment)
 Consensus_Sequence = summary_align.dumb_consensus(float(0.5))
 
-print("# Done.")
-
-#Site: [Ydel, IDs]
+print("# Done creating consensus sequence.")
 data_dict = {}
-
-#data_dict["ID"] = []
-# Keep count of total number of gap characters
 count = 1
-
-#output_directory = "../analysis/04052020"
 output_directory = sys.argv[2]
+
+Gene_map_to_Genomic = {}
+
+gene = fasta_data.split("/")[-1].replace(".msa", "").replace("sequences.", "")
+print("# Gene we are analyzing:", gene)
+
+Gene_map_to_Genomic["S"] = 21563
+Gene_map_to_Genomic["M"] = 26523
+Gene_map_to_Genomic["N"] = 28274
+Gene_map_to_Genomic["ORF1a"] = 266
+Gene_map_to_Genomic["ORF3a"] = 25393
+Gene_map_to_Genomic["ORF6"] = 27202
+Gene_map_to_Genomic["ORF7a"] = 27394
+Gene_map_to_Genomic["ORF8"] = 27894
 
 # =============================================================================
 # Main
@@ -69,8 +76,11 @@ with open(fasta_data, "r") as handle:
 
         #Loop over sequence.
         for n, char in enumerate(str(SEQ)):
-            if char == "-":
-                data_dict[counter] = [ID, int(n+1), Consensus_Sequence[n]]
+            if char == "-": #Will look at the nucleotide position.
+                site_position = int(n+1)
+                genomic_position = Gene_map_to_Genomic[gene] + (site_position*3) 
+                
+                data_dict[counter] = [ID, str(genomic_position) + "-" + str(genomic_position + 2), site_position, Consensus_Sequence[n]]
                 counter += 1
                 count += 1    
             #end if
@@ -78,28 +88,28 @@ with open(fasta_data, "r") as handle:
     #end for
 #end with
 
-#print(data_dict)
+                    
 print("# Done..")
 print("# Character count '-':", count, "\n")
 
-#print(data_dict)
-#sys.exit(10)
+
 print("# Creating dataframe")
-df = pd.DataFrame.from_dict(data_dict, orient='index', columns=['Sequence_ID', 'Site_Indel', 'Consensus(AA)'])
-#df = pd.DataFrame.from_dict(data_dict)
+df = pd.DataFrame.from_dict(data_dict, orient='index', columns=['Sequence_ID', 'Genomic_Position(NT)', 'Site_Indel(AA)', 'Consensus(AA)'])
 print("# Done...")
 
 print("# Sorting dataframe by Site number")
-df = df.sort_values(by=['Site_Indel'])
+df = df.sort_values(by=['Site_Indel(AA)'])
 print("# Done. ")
 
-output_csv = fasta_data.split("/")[-1] + "_table.csv"
+
+output_csv = "genomic_" + fasta_data.split("/")[-1] + "_table.csv"
 
 print("# Saving dataframe to file:", output_csv)
 df.to_csv(os.path.join(output_directory, output_csv), index=False)
 print("# Done....")
 
 print(df)
+
     
 # =============================================================================
 # End of file

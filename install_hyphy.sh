@@ -6,7 +6,7 @@ git clone https://github.com/veg/hyphy.git hyphy-develop
 
 cd hyphy-develop
 
-git checkout 2.5.14
+#git checkout 2.5.14
 #git checkout origin/develop
 
 cmake ./
@@ -18,4 +18,7 @@ cd ..
 git clone https://github.com/veg/hyphy-analyses.git
 
 #End of file
+
+
+
 

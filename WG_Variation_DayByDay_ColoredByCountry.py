@@ -33,12 +33,6 @@ fasta_file = sys.argv[1]
 output_dir = sys.argv[2]
 
 # =============================================================================
-# Helper functions
-# =============================================================================
-def lookup_collection_date():
-    pass
-
-# =============================================================================
 # Main, lets gather the data into a dict.
 # =============================================================================
 with open(fasta_file, "r") as handle:
@@ -67,7 +61,7 @@ with open(fasta_file, "r") as handle:
             #sequence_lengths[count]["Color"] = "red"
             count += 1
         else:
-            print("# ERR:", ID, seq_length)
+            print("\t# ERR (with Date format):", ID, seq_length)
     #end for
 #end with
 
@@ -111,32 +105,20 @@ df['Color'] = 0
 
 #col x row
 for index, row in df.iterrows(): 
-    # print(df["Locale"][i]) 
-    #df["Color"][i] = color_set[df["Locale"][i]]
-    #df["Color"][j] = 0
-    #print(row["Locale"], color_set[row["Locale"]])
-    
     df["Color"][index] = color_set[row["Locale"]]
 #end for
     
-print(df)
-
-#dfObj = pd.DataFrame(sequence_lengths)
-#print(dfObj)
+#print(df)
 
 # =============================================================================
 # Save df to file.
 # =============================================================================
-
-df.to_csv(output_dir+'/wg_variation_daybyday_coloredbycountry.csv')
+if not os.path.exists(output_dir+'/wg_variation_daybyday_coloredbycountry.csv'):
+    df.to_csv(output_dir+'/wg_variation_daybyday_coloredbycountry.csv')
 
 # =============================================================================
 # Lets plot.
 # =============================================================================
-
-
-#fig = px.scatter(df, x="Date", y="WG_Length", color="Locale",
-#                 size=[1]*len([x for x in sequence_lengths]), hover_data=["ID"], marginal_y="histogram", marginal_x="violin")
 
 fig = px.scatter(df, x="Date", y="WG_Length", color="Locale",
                  size=[1]*len([x for x in sequence_lengths]), hover_data=["ID"], marginal_y="histogram", marginal_x="histogram")
@@ -144,51 +126,13 @@ fig.update_layout(
     title='[SARS-CoV-2] Whole genome size variation n=' + str(len([x for x in sequence_lengths])),
     xaxis={'title': 'Collection Date'},
     yaxis={'title': 'Whole Genome size (nt)'})
-
 #fig.show()
 
-plotly.offline.plot(fig, filename=output_dir+'/WG_indel_analysis_daybyday_coloredbylocale.html')
+if not os.path.exists(output_dir+'/WG_indel_analysis_daybyday_coloredbylocale.html'):
+    plotly.offline.plot(fig, filename=output_dir+'/WG_indel_analysis_daybyday_coloredbylocale.html')
 
 
 
-
-
-
-
-sys.exit(1)
-
-
-# =============================================================================
-# Does not reach this.
-# =============================================================================
-
-#init figure
-fig = go.Figure()
-
-fig = go.Figure(data=go.Scatter(
-                x=df["Date"],
-                y=df["WG_Length"],
-                mode='markers',
-                hovertext=df["ID"],
-                marker=dict(
-                     #color='rgb(255, 178, 102)',
-                     color=df["Locale"],
-                     size=9,
-                    
-               )
-))
-
-fig.update_layout(
-    title='[SARS-CoV-2] Whole genome size variation n=' + str(len([x for x in sequence_lengths])),
-    xaxis_title='Date',
-    yaxis_title='Whole Genome size (nt)',
-    showlegend=True,
-    legend=color_set
-)
-
-#fig.show()
-
-plotly.offline.plot(fig, filename='../WG_indel_analysis_daybyday_coloredbylocale.html')
 
 
 

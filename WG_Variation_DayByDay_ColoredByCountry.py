@@ -18,11 +18,11 @@ import os, sys
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
-import plotly.graph_objects as go
-import plotly
+#import plotly.graph_objects as go
+#import plotly
 import numpy as np
 import pandas as pd
-import plotly.express as px
+#import plotly.express as px
 
 # =============================================================================
 # Declares
@@ -41,18 +41,21 @@ with open(fasta_file, "r") as handle:
         SEQ = record.seq
         #num_gaps = str(SEQ).count("-") / 3 #codon aware alignment
         seq_length = len(str(SEQ))
-        if seq_length < 27000: continue
-        
+        #if seq_length < 27000: continue
+       
+        #print("# Processing:", ID)
         #print(ID, seq_length)
         #sequence_lengths[ID] = seq_length
-        date = str(ID.split("|")[-1])
-        
-        
+        date = str(ID.split("|")[-1])        
         locale = ID.split("/")[1]
         #print(ID, date)
-        if " " in ID: print(ID, date)
+        #if " " in ID: print(ID, date)
         
-        if date[:4] == "2020" or date[:4] == "2019" and len(date) >= 7:
+        # Debug
+        #print("# Processing:", ID, date, locale)
+        
+        if date[:4] == "2020" or date[:4] == "2019" or date[:4] == "2021" and len(date) >= 7:
+            #print("Saving")
             sequence_lengths[count] = {}
             sequence_lengths[count]["ID"] = ID
             sequence_lengths[count]["Date"] = date
@@ -113,13 +116,15 @@ for index, row in df.iterrows():
 # =============================================================================
 # Save df to file.
 # =============================================================================
-if not os.path.exists(output_dir+'/wg_variation_daybyday_coloredbycountry.csv'):
-    df.to_csv(output_dir+'/wg_variation_daybyday_coloredbycountry.csv')
+#if not os.path.exists(output_dir+'/wg_variation_daybyday_coloredbycountry.csv')
+
+df.to_csv(output_dir+'/wg_variation_daybyday_coloredbycountry.csv')
 
 # =============================================================================
 # Lets plot.
 # =============================================================================
-
+import sys
+sys.exit(1)
 fig = px.scatter(df, x="Date", y="WG_Length", color="Locale",
                  size=[1]*len([x for x in sequence_lengths]), hover_data=["ID"], marginal_y="histogram", marginal_x="histogram")
 fig.update_layout(

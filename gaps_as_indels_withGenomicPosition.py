@@ -22,8 +22,8 @@ from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 from Bio import AlignIO
 from Bio.Align import AlignInfo
-import plotly.graph_objects as go
-import plotly
+#import plotly.graph_objects as go
+#import plotly
 import numpy as np
 import pandas as pd
 
@@ -48,7 +48,8 @@ output_directory = sys.argv[2]
 
 Gene_map_to_Genomic = {}
 
-gene = fasta_data.split("/")[-1].replace(".msa", "").replace("sequences.", "")
+#gene = fasta_data.split("/")[-1].replace(".msa", "").replace("sequences.", "")
+gene = sys.argv[3]
 print("# Gene we are analyzing:", gene)
 
 Gene_map_to_Genomic["S"] = 21563

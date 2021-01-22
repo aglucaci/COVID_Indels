@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from itertools import islice
 import sys
-import plotly.express as px
+#import plotly.express as px
 
 
 #input_fasta = "../analysis/04142020/hyphy_alignments/nucl/gisaid_cov2020_sequences.fasta.S_nuc.fas"
@@ -29,9 +29,14 @@ with open(input_fasta, "r") as handle:
         SEQ = record.seq
         #date = ID.split("_")[-3] + "-" + ID.split("_")[-2] + "-" + ID.split("_")[-1]
         #date = ID.split("_")[-3] + "-" + ID.split("_")[-2] + "-" + ID.split("_")[-1]
-        date = ID.split("_")[-2]
-        date = date[:4] + "-" + date[4:6] + "-" + date[6:8]
-        if date[:4] == "2022": continue
+  
+        date = ID.split("_")
+        # Year-Month-Day
+
+        date = date[-3] + "-" + date[-2] + "-" + date[-1]
+        #date = date[:4] + "-" + date[4:6] + "-" + date[6:8]
+        #if date[:4] == "2022": continue
+       
         #print(date)
         
         #Debug.
